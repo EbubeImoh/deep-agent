@@ -1,4 +1,4 @@
-# Deep Agent + uv
+# Deep Agent
 
 This repo is prepped to use [uv](https://github.com/astral-sh/uv) for dependency and virtual environment management. The lone `workbook.ipynb` notebook lives at the project root for now; feel free to reorganize into a dedicated `notebooks/` directory once you start collecting more experiments.
 
