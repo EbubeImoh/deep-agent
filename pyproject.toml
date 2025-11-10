@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deep-agent"
+version = "0.1.0"
+description = "Exploratory environment scaffolded for uv workflows."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Ebube Imoh" }]
+dependencies = [
+  "deepagents>=0.2.5",
+  "tavily-python>=0.7.12",
+  "dotenv==0.9.9",
+]
+
+[project.optional-dependencies]
+notebooks = [
+  "ipykernel>=6.29",
+  "jupyterlab>=4.2",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/deep_agent"]
+
+[tool.uv]
+dev-dependencies = [
+  "ipykernel>=6.29",
+  "jupyterlab>=4.2",
+]
