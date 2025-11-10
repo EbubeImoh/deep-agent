@@ -1,4 +1,4 @@
-# Deep Agent + uv
+# Deep Agent
 
 This repo is prepped to use [uv](https://github.com/astral-sh/uv) for dependency and virtual environment management. The reusable agent logic lives in `src/deep_agent/agent.py`, and the `workbook.ipynb` notebook simply imports it for interactive exploration.
 
