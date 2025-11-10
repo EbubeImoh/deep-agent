@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import argparse
 import getpass
 import os
+import sys
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Literal, Optional
+from typing import Any, Callable, Dict, Literal, Optional, Sequence
 
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -104,6 +106,65 @@ DEFAULT_CONFIG = ResearchAgentConfig()
 agent = build_research_agent(DEFAULT_CONFIG)
 
 
+def _build_arg_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Run the Deep Agent research workflow from the CLI.")
+    parser.add_argument(
+        "question",
+        nargs="?",
+        help="Research question to send to the agent. If omitted, you will be prompted interactively.",
+    )
+    parser.add_argument(
+        "--model",
+        default=DEFAULT_CONFIG.model,
+        help=f"LLM model identifier (default: {DEFAULT_CONFIG.model}).",
+    )
+    parser.add_argument(
+        "--system-prompt",
+        help="Optional override for the agent system prompt.",
+    )
+    parser.add_argument(
+        "--no-google-prompt",
+        action="store_true",
+        help="Fail immediately if GOOGLE_API_KEY is missing instead of prompting via getpass.",
+    )
+    return parser
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    """Console entry point so `uv run deep-agent <question>` just works."""
+    parser = _build_arg_parser()
+    args = parser.parse_args(argv)
+
+    config = ResearchAgentConfig(
+        model=args.model,
+        system_prompt=args.system_prompt or DEFAULT_CONFIG.system_prompt,
+        prompt_for_google_key=not args.no_google_prompt,
+    )
+
+    question = args.question
+    while True:
+        if not question:
+            question = input("Enter research question (type 'quit' to exit): ").strip()
+        lowered = question.lower()
+        if lowered in {"quit", "exit"}:
+            break
+        if not question:
+            print("Please provide a question or type 'quit' to exit.")
+            question = None
+            continue
+
+        response = run_research_query(question, config=config)
+        print(response)
+        print("-" * 40)
+        question = None  # force prompt on next loop
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
 __all__ = [
     "ResearchAgentConfig",
     "build_internet_search_tool",
@@ -111,4 +172,5 @@ __all__ = [
     "run_research_query",
     "DEFAULT_CONFIG",
     "agent",
+    "main",
 ]

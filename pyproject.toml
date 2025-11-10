@@ -21,6 +21,9 @@ notebooks = [
   "jupyterlab>=4.2",
 ]
 
+[project.scripts]
+deep-agent = "deep_agent.agent:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/deep_agent"]
 
